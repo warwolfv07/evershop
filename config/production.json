@@ -1,0 +1,152 @@
+{
+  "shop": {
+    "currency": "INR",
+    "language": "en",
+    "weightUnit": "kg"
+  },
+  "catalog": {
+    "product": {
+      "image": {
+        "thumbnail": {
+          "width": 100,
+          "height": 100
+        },
+        "listing": {
+          "width": 300,
+          "height": 300
+        },
+        "single": {
+          "width": 500,
+          "height": 500
+        }
+      }
+    },
+    "showOutOfStockProduct": false
+  },
+  "pricing": {
+    "tax": {
+      "rounding": "round",
+      "precision": 2,
+      "round_level": "unit",
+      "price_including_tax": true
+    }
+  },
+    "order": {
+        
+            "new": { 
+                "name": "New",
+                "badge": "default", 
+                "progress": "incomplete", 
+                "isDefault": true,
+                "next": [ 
+                    "processing",
+                    "canceled"
+                ]
+            },
+            "processing": {
+                "name": "Processing",
+                "badge": "default",
+                "progress": "incomplete",
+                "next": [
+                    "completed",
+                    "canceled"
+                ]
+            },
+            "completed": {
+                "name": "Completed",
+                "badge": "success",
+                "progress": "complete",
+                "next": [
+                    "closed"
+                ]
+            },
+            "canceled": {
+                "name": "Canceled",
+                "badge": "critical",
+                "progress": "complete",
+                "next": []
+            },
+            "closed": {
+                "name": "Closed",
+                "badge": "default",
+                "progress": "complete",
+                "next": []
+            }
+        },
+    "shipmentStatus": {
+        "pending": {
+          "name": "Pending",
+          "badge": "default",
+          "progress": "incomplete",
+          "isDefault": true
+        },
+        "processing": {
+          "name": "Processing",
+          "badge": "default",
+          "progress": "incomplete",
+          "isDefault": false
+        },
+        "shipped": {
+          "name": "Shipped",
+          "badge": "attention",
+          "progress": "complete"
+        },
+        "delivered": {
+          "name": "Delivered",
+          "badge": "success",
+          "progress": "complete",
+          "isCancelable": false 
+        },
+        "canceled": {
+          "name": "Canceled",
+          "badge": "critical",
+          "progress": "complete",
+          "isCancelable": false
+        }
+    },
+    "paymentStatus": {
+        "pending": {
+          "name": "Pending",
+          "badge": "default",
+          "progress": "incomplete",
+          "isDefault": true
+        },
+        "processing": {
+          "name": "Processing",
+          "badge": "default",
+          "progress": "incomplete",
+          "isCancelable": false, 
+          "isDefault": false
+        },
+        "paid": {
+          "name": "Paid",
+          "badge": "success",
+          "progress": "complete"
+        },
+        "failed": {
+          "name": "Failed",
+          "badge": "critical",
+          "progress": "complete"
+        }
+    },
+    "themeConfig": {
+        "logo": {
+          "alt": "shop logo til",
+          "src": "/Veztra_Logo_with_inner_white_outline.png",
+          "width": 100,
+          "height": 100
+        },
+        "headTags": {
+          "links": [
+            {
+              "rel": "icon",
+              "href": "/Veztra_Fevicon.ico"
+            }
+          ],
+          "metas": [],
+          "scripts": []
+        },
+        "copyRight": "© 2025 Veztra. All Rights Reserved."
+    }
+    
+}
