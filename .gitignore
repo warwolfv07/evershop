@@ -24,7 +24,6 @@ npm-debug.log
 coverage
 cypress
 .turbo
-/config
 /packages/evershop/config
 .prettierignore
 .prettierrc
