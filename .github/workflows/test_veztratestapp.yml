@@ -31,15 +31,21 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: npm install, build, and test
+      - name: Install root dependencies
+        working-directory: ./evershop
+        run: npm install
+
+      - name: Install and compile postgres-query-builder
+        working-directory: ./evershop/packages/postgres-query-builder
         run: |
           npm install
-          cd packages/postgres-query-builder
-          npm install
           npm run compile
-          cd ../../..
+
+      - name: Compile full project
+        working-directory: ./evershop
+        run: |
           npm run compile:tsc
-          npm run build --if-present
+          npm run build --if-present  
           npm run test --if-present
 
       - name: Upload artifact for deployment job
