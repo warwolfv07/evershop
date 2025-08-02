@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./evershop   #Correct the working directory here
     permissions:
       contents: read #This is required for actions/checkout
 
@@ -38,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: ./evershop   #Upload from correct directory
 
   deploy:
     runs-on: ubuntu-latest
@@ -66,5 +69,5 @@ jobs:
         with:
           app-name: 'VeztraTestApp'
           slot-name: 'Production'
-          package: .
+          package: ./evershop   # Deploy the correct subfolder
           
