@@ -26,6 +26,10 @@ jobs:
       - name: npm install, build, and test
         run: |
           npm install
+          cd packages/postgres-query-builder
+          npm install
+          npm run compile
+          cd ../../..
           npm run compile:tsc
           npm run build --if-present
           npm run test --if-present
