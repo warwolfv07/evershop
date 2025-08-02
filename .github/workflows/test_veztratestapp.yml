@@ -18,6 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Debug - Print directory structure
+        run: |
+          echo "Root directory:"
+          pwd
+          ls -la
+          echo "packages directory:"
+          ls -la packages
+
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
@@ -25,13 +33,11 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          cd evershop
           npm install
           cd packages/postgres-query-builder
           npm install
           npm run compile
           cd ../../..
-          cd evershop
           npm run compile:tsc
           npm run build --if-present
           npm run test --if-present
@@ -40,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./evershop   #Upload from correct directory
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -68,5 +74,5 @@ jobs:
         with:
           app-name: 'VeztraTestApp'
           slot-name: 'Production'
-          package: ./evershop   # Deploy the correct subfolder
+          package: .
           
