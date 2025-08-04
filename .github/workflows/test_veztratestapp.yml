@@ -44,13 +44,6 @@ jobs:
         run: |
           mkdir deploy
           cp -r .evershop deploy/.evershop
-          cp -r node_modules deploy/node_modules
-          cp -r packages deploy/packages
-          cp -r public deploy/public || true
-          cp package*.json deploy/
-          cp -r config deploy/config || true
-          cp server.js deploy/server.js || true
-          cp -r dist deploy/dist || true
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
