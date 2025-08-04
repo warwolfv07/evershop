@@ -13,7 +13,6 @@ dist
 !extensions/product_review
 /themes
 .idea/*
-.evershop
 .vscode
 npm-debug.log
 /package-log.json

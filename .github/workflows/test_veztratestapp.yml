@@ -40,16 +40,11 @@ jobs:
           npm run build --if-present  
           npm run test --if-present
 
-      - name: Prepare deploy folder
-        run: |
-          mkdir deploy
-          cp -r .evershop deploy/.evershop
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path:  deploy/
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -70,9 +65,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_102FB3AFD65A4446B16050EBF64B70F8 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_05BF1094D3A24B5A981A1591D93AD1DD }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6C457F9B3D6445C9A02366B1B46A77C0 }}
-
-      - name: List deploy folder contents
-        run: ls -R deploy/
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
