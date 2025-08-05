@@ -42,26 +42,26 @@ jobs:
 
       - name: Debug - check if .evershop exists
         run: ls -la .evershop || echo "No .evershop folder built"
-
-      - name: Prepare deploy folder
-        run: |
-          mkdir deploy
-          cp -r .evershop deploy/.evershop
-          cp -r dist deploy/dist || echo "dist not found"
-          cp package.json deploy/
-          cp -r node_modules deploy/node_modules || echo "node_modules not found"
-          cp index.js deploy/index.js || true  
       
       - name: List contents of deploy folder
         run: |
           echo "Contents of deploy folder:"
           ls deploy
       
-      - name: Upload deploy folder as artifact
+      - name: Upload deploy artifact
         uses: actions/upload-artifact@v4
         with:
           name: deploy-folder
-          path: deploy/
+          path: |
+            .evershop
+            node_modules
+            packages
+            public
+            config
+            package.json
+            index.js
+            next.config.js
+            tsconfig.json
 
   deploy:
     runs-on: ubuntu-latest
@@ -78,8 +78,10 @@ jobs:
           path: deploy/
       
       
-      - name: List downloaded files (debug)
-        run: ls deploy
+      - name: List contents of deploy folder
+        run: |
+          echo "Deploy folder contents:"
+          ls -la deploy/
 
       - name: Login to Azure
         uses: azure/login@v2
