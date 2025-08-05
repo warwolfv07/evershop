@@ -40,11 +40,24 @@ jobs:
           npm run build --if-present  
           npm run test --if-present
 
+      - name: Debug - check if .evershop exists
+        run: ls -la .evershop || echo "No .evershop folder built"
+
+      - name: Prepare deploy folder
+        run: |
+          mkdir deploy
+          cp -r .evershop deploy/.evershop
+          cp -r dist deploy/dist || echo "dist not found"
+          cp package.json deploy/
+          cp -r node_modules deploy/node_modules || echo "node_modules not found"
+          cp index.js deploy/index.js || true  
+      
+      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: deploy/
 
   deploy:
     runs-on: ubuntu-latest

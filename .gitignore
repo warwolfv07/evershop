@@ -17,6 +17,7 @@ dist
 npm-debug.log
 /package-log.json
 /media
+.evershop
 .DS_Store
 .log
 coverage
