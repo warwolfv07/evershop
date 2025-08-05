@@ -40,26 +40,11 @@ jobs:
           npm run build --if-present  
           npm run test --if-present
 
-      - name: Debug - check if .evershop exists
-        run: ls -la .evershop || echo "No .evershop folder built"
-      
-      - name: Rename .evershop to evershop
-        run: mv .evershop evershop
-
-      - name: Upload deploy artifact
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: deploy-folder
-          path: |
-            evershop
-            node_modules
-            packages
-            public
-            config
-            package.json
-            index.js
-            next.config.js
-            tsconfig.json
+          name: node-app
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -69,21 +54,11 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - name: Download deploy artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: deploy-folder
-          path: deploy/
+          name: node-app
       
-      
-      - name: List contents of deploy folder
-        run: |
-          echo "Deploy folder contents:"
-          ls -la deploy/
-
-      - name: Rename evershop back to .evershop
-        run: mv deploy/evershop deploy/.evershop
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -97,5 +72,4 @@ jobs:
         with:
           app-name: 'VeztraTestApp'
           slot-name: 'Production'
-          package: ./deploy
-          
+          package: .
