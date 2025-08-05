@@ -43,11 +43,6 @@ jobs:
       - name: Debug - check if .evershop exists
         run: ls -la .evershop || echo "No .evershop folder built"
       
-      - name: List contents of deploy folder
-        run: |
-          echo "Contents of deploy folder:"
-          ls deploy
-      
       - name: Upload deploy artifact
         uses: actions/upload-artifact@v4
         with:
