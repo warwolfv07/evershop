@@ -55,12 +55,12 @@ jobs:
       - name: List contents of deploy folder
         run: |
           echo "Contents of deploy folder:"
-          ls -R deploy
+          ls deploy
       
-      - name: Upload artifact for deployment job
+      - name: Upload deploy folder as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
+          name: deploy-folder
           path: deploy/
 
   deploy:
@@ -71,11 +71,16 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - name: Download artifact from build job
+      - name: Download deploy artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: deploy-folder
+          path: deploy/
       
+      
+      - name: List downloaded files (debug)
+        run: ls deploy
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
