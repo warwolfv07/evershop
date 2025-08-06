@@ -25,7 +25,7 @@ jobs:
 
       - name: Install root dependencies
         working-directory: .
-        run: npm install
+        run: npm install @evershop/evershop
 
       - name: Install and compile postgres-query-builder
         working-directory: ./packages/postgres-query-builder
@@ -93,4 +93,5 @@ jobs:
         with:
           app-name: 'VeztraTestApp'
           slot-name: 'Production'
+
           package: ./deploy
