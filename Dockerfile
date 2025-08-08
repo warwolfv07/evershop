@@ -15,6 +15,7 @@ WORKDIR /app/packages/postgres-query-builder
 RUN npm install
 RUN npm run compile
 WORKDIR /app
+ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npm run build
 
 EXPOSE 80
