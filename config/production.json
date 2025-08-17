@@ -132,7 +132,7 @@
     "themeConfig": {
         "logo": {
           "alt": "shop logo til",
-          "src": "/Veztra_Logo_with_inner_white_outline.png",
+          "src": "/Veztra_Logo_with_inner_white_outline.svg",
           "width": 100,
           "height": 100
         },

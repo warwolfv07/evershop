@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   app:
     image: evershop-app:latest
@@ -38,7 +36,6 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    entrypoint: sh -c "trap exit TERM; while :; do sleep 3600; done"
     networks:
       - myevershop
 

@@ -30,3 +30,6 @@ cypress
 mysqlToPostgres.js
 .github/images
 config/development.json
+deploy.sh
+/certbot/conf/renewal/
+/certbot/www/.well-known/
