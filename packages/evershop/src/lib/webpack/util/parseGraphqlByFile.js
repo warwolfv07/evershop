@@ -40,7 +40,7 @@ export function parseGraphqlByFile(module) {
         return `"getWidgetSetting_${base64}"`;
       }
     );
-
+    
     const queryAst = parse(queryBody);
     const map = queryAst.definitions[0].selectionSet.selections.map(
       (selection) => {
