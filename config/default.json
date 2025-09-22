@@ -159,7 +159,7 @@
             {
                 "name": "razorpay",
                 "resolve": "node_modules/razorpay",
-                "enabled": true,
+                "enabled": false,
                 "priority": 10
             }
         ]

@@ -3,39 +3,51 @@ import { getConfig } from '../../../packages/evershop/dist/lib/util/getConfig.js
 import { hookAfter } from '../../../packages/evershop/dist/lib/util/hookable.js';
 import { registerPaymentMethod } from '../../../packages/evershop/dist/modules/checkout/services/getAvailablePaymentMethos.js';
 import { getSetting } from '../../../packages/evershop/dist/modules/setting/services/setting.js';
+//for later implementation for cancellation of transaction
+// import { cancelPayUTransaction } from './services/cancelPayUTransaction.js';
 
 export default async () => {
-  // Example: add some PayU-specific defaults (can be removed later)
+  // 1. Define payment statuses for PayU
   const payuPaymentStatus = {
     order: {
       paymentStatus: {
-        initiated: {
-          name: 'Initiated',
-          badge: 'attention',
-          progress: 'incomplete'
-        },
         failed: {
           name: 'Failed',
           badge: 'critical',
           progress: 'failed'
+        },
+        refunded: {
+          name: 'Refunded',
+          badge: 'critical',
+          progress: 'complete'
+        },
+        partial_refunded: {
+          name: 'Partial Refunded',
+          badge: 'critical',
+          progress: 'incomplete'
         }
+      },
+      psoMapping: {
+        'failed:*': 'new',
+        'refunded:*': 'closed',
+        'partial_refunded:*': 'processing',
+        'partial_refunded:delivered': 'completed'
       }
     }
   };
   config.util.setModuleDefaults('oms', payuPaymentStatus);
 
-  // // Example hook (optional — can be removed for now)
-  // hookAfter('changePaymentStatus', async (order, orderID, status) => {
-  //   if (order.payment_method !== 'payu') {
-  //     return;
-  //   }
-  //   if (status === 'canceled') {
-  //     // In future: call PayU cancel API here
-  //     console.log(`PayU payment canceled for order ${orderID}`);
-  //   }
-  // });
+  // 2. Hook after payment status change (optional for PayU)
+  // For now, no cancel API like Stripe. You can enable later if PayU supports it.
+  /*
+  hookAfter('changePaymentStatus', async (order, orderID, status) => {
+    if (status !== 'canceled') return;
+    if (order.payment_method !== 'payu') return;
+    await cancelPayUTransaction(orderID);
+  });
+  */
 
-  // Register PayU as a payment method
+  // 3. Register PayU as a payment method
   registerPaymentMethod({
     init: async () => ({
       methodCode: 'payu',
