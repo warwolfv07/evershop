@@ -151,12 +151,6 @@
     "system": {
         "extensions": [
             {
-                "name": "payu",
-                "resolve": "extensions/payu",
-                "enabled": true,
-                "priority": 9
-            },
-            {
                 "name": "razorpay",
                 "resolve": "node_modules/razorpay",
                 "enabled": false,

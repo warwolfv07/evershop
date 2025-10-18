@@ -23,7 +23,8 @@
   "license": "GNU GENERAL PUBLIC LICENSE 3.0",
   "dependencies": {
     "@evershop/evershop": "^2.0.1",
-    "evershop-razorpay": "^1.0.6"
+    "evershop-razorpay": "^1.0.6",
+    "payu-websdk": "^1.3.1"
   },
   "devDependencies": {
     "@parcel/watcher": "^2.5.1",

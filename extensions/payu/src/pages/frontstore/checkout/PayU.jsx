@@ -5,7 +5,7 @@ import {
 import RenderIfTrue from '@components/common/RenderIfTrue';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { _ } from '../../../../../lib/locale/translate/_.js';
+import { _ } from '../../../../../../packages/evershop/src/lib/locale/translate/_.js';
 
 export function PayU({ createOrderAPI, orderId, orderPlaced }) {
   const [error, setError] = useState('');
