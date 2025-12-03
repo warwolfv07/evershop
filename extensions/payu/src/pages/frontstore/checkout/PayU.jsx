@@ -9,9 +9,13 @@ import { _ } from '../../../../../../packages/evershop/src/lib/locale/translate/
 
 export function PayU({ createOrderAPI, orderId, orderPlaced }) {
   const [error, setError] = useState('');
+  const [orderCreated, setOrderCreated] = useState(false);
 
   useEffect(() => {
-    const createOrder = async () => {
+    if (orderPlaced && orderId && !orderCreated) {
+      setOrderCreated(true); // prevent re-run
+
+      const createOrder = async () => {
       const response = await fetch(createOrderAPI, {
         method: 'POST',
         headers: {
@@ -24,18 +28,35 @@ export function PayU({ createOrderAPI, orderId, orderPlaced }) {
       const data = await response.json();
 
       if (!response.error) {
-        const { redirectUrl } = data.data;
-        // Redirect to PayU payment page
-        window.location.href = redirectUrl;
+        const { redirectUrl, payuPayload} = data.data;
+
+        // Build a hidden form dynamically in the browser
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = redirectUrl;
+
+        // Add all PayU parameters as hidden inputs
+        for (const [key, value] of Object.entries(payuPayload)) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = value;
+          form.appendChild(input);
+        }
+
+        // Append to the DOM and auto-submit
+        document.body.appendChild(form);
+        form.submit();
+        
       } else {
         setError(response.error.message);
       }
     };
 
-    if (orderPlaced && orderId) {
       createOrder();
     }
-  }, [orderPlaced, orderId]);
+  }, [orderPlaced, orderId, orderCreated]);
+
 
   return (
     <div>
@@ -58,6 +79,7 @@ PayU.defaultProps = {
 };
 
 export default function PayUMethod({ createOrderAPI }) {
+  const [placed, setPlaced] = useState(false);
   const checkout = useCheckout();
   const { placeOrder } = useCheckoutDispatch();
   const { steps, paymentMethods, setPaymentMethods, orderPlaced, orderId } =
@@ -70,9 +92,11 @@ export default function PayUMethod({ createOrderAPI }) {
   useEffect(() => {
     const selectedPaymentMethod = paymentMethods.find((pm) => pm.selected);
     if (
+      !placed &&
       steps.every((step) => step.isCompleted) &&
       selectedPaymentMethod.code === 'payu'
     ) {
+      setPlaced(true);
       placeOrder();
     }
   }, [steps]);

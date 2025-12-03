@@ -13,11 +13,9 @@ import { getValueSync } from '../../../../../packages/evershop/dist/lib/util/reg
 import { toPrice } from '../../../../../packages/evershop/dist/modules/checkout/services/toPrice.js';
 import { getContextValue } from '../../../../../packages/evershop/dist/modules/graphql/services/contextHelper.js';
 import { getSetting } from '../../../../../packages/evershop/dist/modules/setting/services/setting.js';
-//import { createAxiosInstance } from '../../services/requester.js';
 
 export default async (request, response, next) => {
   try {
-    console.log("Inside createOrder")
     const { order_id } = request.body;
     const order = await select()
       .from('order')
@@ -79,7 +77,6 @@ export default async (request, response, next) => {
 
 
       const orderData = {
-        //intent: await getSetting('paypalPaymentIntent', 'CAPTURE'),
         purchase_units: [
           {
             items: items.map((item) => ({
@@ -96,19 +93,7 @@ export default async (request, response, next) => {
             amount: finalAmount
           }
         ],
-      //   application_context: {
-      //     cancel_url: `${getContextValue(request, 'homeUrl')}${buildUrl(
-      //       'paypalCancel',
-      //       { order_id }
-      //     )}`,
-      //     return_url: `${getContextValue(request, 'homeUrl')}${buildUrl(
-      //       'paypalReturn',
-      //       { order_id }
-      //     )}`,
-      //     shipping_preference: 'SET_PROVIDED_ADDRESS',
-      //     user_action: 'PAY_NOW',
-      //     brand_name: await getSetting('storeName', 'Evershop')
-      //   }
+
       };
       const shippingAddress = await select()
         .from('order_address')
@@ -167,21 +152,30 @@ export default async (request, response, next) => {
         };
       }
 
-      const txnid = `PAYU_${Date.now()}_${order_id}`;
+      function generatePayUTxnId(orderId){
+        // Use last 4–6 chars of orderId to keep some uniqueness from it
+        const shortOrderId = orderId.replace(/[^a-zA-Z0-9]/g, '').slice(-6);        
+        // Combine with current timestamp (last few digits for brevity)
+        const timePart = Date.now().toString().slice(-8);        
+        // Construct compact ID (under 25 chars)
+        return `PAYU_${timePart}_${shortOrderId}`;              
+      }
 
-      const key = process.env.PAYU_MERCHANT_KEY;
-      const salt = process.env.PAYU_MERCHANT_SALT;
-      //const amount = finalAmount.value.toString();
-      const amount = "620.00";
+      const txnid = generatePayUTxnId(order_id);
+      console.log(txnid)
+
+      const key = process.env.PAYU_KEY;
+      const salt = process.env.PAYU_SALT;
+      const amount = finalAmount.value.toString();
       const productinfo = 'Evershop Order';
-      const fullname = order.customer_full_name || 'Customer';
+      const firstname = order.customer_full_name || 'Customer';
       const email = order.customer_email || 'test@example.com';
       const phone = shippingAddress.telephone || '9999999999';
       const surl = `${process.env.BASE_URL}/payu/success`;
       const furl = `${process.env.BASE_URL}/payu/failure`;
 
       //Generate hash (sequence: key|txnid|amount|productinfo|firstname|email|||||||||||salt)
-      const hashString = `${key}|${txnid}|${amount}|${productinfo}|${fullname}|${email}|||||||||||${salt}`;
+      const hashString = `${key}|${txnid}|${amount}|${productinfo}|${firstname}|${email}|||||||||||${salt}`;
       const hash = crypto.createHash('sha512').update(hashString).digest('hex');
       
       const payuPayload = {
@@ -189,7 +183,7 @@ export default async (request, response, next) => {
       txnid,
       amount,
       productinfo,
-      fullname,
+      firstname,
       email,
       phone,
       surl,
@@ -197,35 +191,34 @@ export default async (request, response, next) => {
       hash
     };
 
-    console.log(payuPayload);
-    console.log(finalAmount.value);
+    // Build HTML form with hidden inputs
+  let formFields = '';
+  for (const [key, value] of Object.entries(payuPayload)) {
+    formFields += `<input type="hidden" name="${key}" value="${value}" />`;
+  }
 
+  const redirectUrl =
+    process.env.PAYU_ENVIRONMENT === 'LIVE'
+      ? 'https://secure.payu.in/_payment'
+      : 'https://test.payu.in/_payment';
 
-      // const finalPaypalOrderData = getValueSync(
-      //   'finalPaypalOrderData',
-      //   orderData,
-      //   {
-      //     order,
-      //     items,
-      //     shippingAddress,
-      //     billingAddress
-      //   }
-      // );
-      // Call PayPal API to create order using axios
-      // const axiosInstance = await createAxiosInstance(request);
-      // const { data } = await axiosInstance.post(
-      //   `/v2/checkout/orders`,
-      //   finalPaypalOrderData,
-      //   {
-      //     validateStatus: (status) => status < 500
-      //   }
-      // );
+  const html = `
+    <html>
+    <body onload="document.forms[0].submit()">
+      <form method="POST" action="${redirectUrl}">
+        ${formFields}
+      </form>
+    </body>
+    </html>
+  `;
+
  
         // Update order and insert transaction id
         await update('order')
           .given({ integration_order_id: txnid })
           .where('uuid', '=', order_id)
           .execute(pool);
+
 
         response.status(OK);
         return response.json({
@@ -234,7 +227,7 @@ export default async (request, response, next) => {
             redirectUrl:
               process.env.PAYU_ENVIRONMENT === 'LIVE'
                 ? 'https://secure.payu.in/_payment'
-                : 'https://test.payu.in/_payment'
+                : 'https://test.payu.in/_payment',
           }
         });
       
